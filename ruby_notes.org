@@ -1,0 +1,74 @@
+#+TITLE: Ruby Source Code Notes
+
+* Intro
+These are my notes for the Ruby source code. I hope to document my
+attempts to understand the Ruby code.
+
+* Globals
+- <<Qundef>> ~Qundef~ --- (?) A magic number that represents undefined
+  
+* Helper Functions/Macros
+- <<has_delayed_token>> ~has_delayed_token~ --- For Ruby parser,
+  always false
+
+* Types
+- <<~parser_params~>> ~parser_params~ --- Oh boy, this is a complicated
+  one. Consists of a massive struct that contains:
+  - A [[rb_imemo_tmpbuf_t][~rb\_imemo\_tmpbuf\_t~]] pointer called heap (so
+    I'm guessing this is just the heap/free list for the parser?).
+  - A [[YYSTYPE][~YYSTYPE~]] pointer called ~lval~
+  - A struct called [[lex][~lex~]]
+  - Two ~stack_type~, i.e. [[VALUE][~VALUE~]]'s called ~cond_stack~ and
+    ~cmdarg_stack~
+  - A bunch of ~int~'s:
+    - ~tokidx~
+    - ~toksiz~
+    - ~tokline~
+    - ~heredoc_end~
+    - ~heredoc_indent~
+    - ~heredoc_line_indent~
+    - ~line_count~
+    - ~ruby_sourceline~
+
+
+- <<~VALUE~>> ~VALUE~ --- ~uintptr_t~
+- <<yytokentype>> ~yytokentype~
+- <<YYSTYPE>> ~YYSTYPE~ --- 
+- <<rb_imemo_tmpbuf_t>> ~rb_imemo_tmpbuf_t~ --- A linked list with a payload consisting of
+  two [[~VALUE~]]'s: ~flags~ and ~reserved~ and a ~VALUE~ pointer
+  called....~ptr~ which apparently is a malloc'd buffer. Also has a
+  ~size_t~ called ~cnt~ which is the size of that buffer. Finally has
+  a pointer to another ~rb_imemo_tmpbuf_struct~ called ~next~.
+
+* Lexer
+
+- <<yylex>> ~yylex~ --- A wrapper for [[parser_yylex][~parser\_yylex~]] with some extra
+  options. Initializes a [[yytokentype][~yytokentype~]]. Assigns ~p~, a struct of
+  [[~parser\_params~]] an [[lval][~lval~]] (with type [[YYSTYPE][~YYSTYPE~]]) and gives ~lval~ a
+  ~val~ of [[Qundef][~Qundef~]]. (I guess initializing ~p~ with an empty ~lval~?)
+  Then calls [[parser_yylex][~parser\_yylex~]] with ~p~ and assigns the result to the
+  ~yytokentype~ variable. If [[has_delayed_token][~has\_delayed\_token~]] (never in Ruby
+  parser) then call ~dispatch_delayed_token~. Else if ~parser\_yylex~
+  returns 0 then call ~dispatch_scan_event~, which, uh, in Ruby parser
+  does nothing (well, it casts 0 to void).
+- <<parser_yylex>> ~parser_yylex~ ---
+
+* Terminals
+- <<~kALIAS~>> --- ~alias~
+- <<~tGVAR~>> --- Global variable
+- <<~tBACK_REF~>> --- ~$+~, ~$&~, ~$`~, ~$\~
+- <<~tNTH_REF~>> --- ~$1~, ~$2~...
+- 
+* Grammar Rules
+- ~program~ --- Just the top level rule. Alias for [[top_comp_stmt][~top\_compstmt~]]
+- <<top_compstmt>> ~top_compstmt~ --- Again just [[top_stmts][~top\_stmts~]] with an
+  [[opt_terms][~opt\_terms~]] add on.
+- <<top_stmts>> ~top_stmts~ --- Either nothing, one single [[~top_stmt~]] or a 
+- <<~mlhs~>> ~mlhs~ --- Either [[~mlhs_basic~]] or essential [[~mlhs_basic~]]
+  in parenthesis. Pretty sure this is just any infix expression.
+- 
+ 
+* Sources
+
+- https://whitequark.org/blog/2013/04/01/ruby-hacking-guide-ch-11-finite-state-lexer/
+- https://ruby-hacking-guide.github.io/

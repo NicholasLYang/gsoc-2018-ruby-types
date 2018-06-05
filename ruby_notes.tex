@@ -1,0 +1,129 @@
+% Created 2018-06-05 Tue 15:32
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Nicholas Yang}
+\date{\today}
+\title{Ruby Source Code Notes}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{Intro}
+\label{sec-1}
+These are my notes for the Ruby source code. I hope to document my
+attempts to understand the Ruby code.
+
+\section{Globals}
+\label{sec-2}
+\begin{itemize}
+\item \label{Qundef} \verb~Qundef~ --- (?) A magic number that represents undefined
+\end{itemize}
+
+\section{Helper Functions/Macros}
+\label{sec-3}
+\begin{itemize}
+\item \label{has_delayed_token} \verb~has_delayed_token~ --- For Ruby parser,
+always false
+\end{itemize}
+
+\section{Types}
+\label{sec-4}
+\begin{itemize}
+\item \label{parser_params} \verb~parser_params~ --- Oh boy, this is a complicated
+one. Consists of a massive struct that contains:
+\begin{itemize}
+\item A \hyperref[rb_imemo_tmpbuf_t]{\verb~rb\_imemo\_tmpbuf\_t~} pointer called heap (so
+I'm guessing this is just the heap/free list for the parser?).
+\item A \hyperref[YYSTYPE]{\verb~YYSTYPE~} pointer called \verb~lval~
+\item A struct called \texttt{\verb~lex~}
+\item Two \verb~stack_type~, i.e. \texttt{\verb~VALUE~}'s called \verb~cond_stack~ and
+\verb~cmdarg_stack~
+\item A bunch of \verb~int~'s:
+\begin{itemize}
+\item \verb~tokidx~
+\item \verb~toksiz~
+\item \verb~tokline~
+\item \verb~heredoc_end~
+\item \verb~heredoc_indent~
+\item \verb~heredoc_line_indent~
+\item \verb~line_count~
+\item \verb~ruby_sourceline~
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+
+\begin{itemize}
+\item \label{VALUE} \verb~VALUE~ --- \verb~uintptr_t~
+\item \label{yytokentype} \verb~yytokentype~
+\item \label{YYSTYPE} \verb~YYSTYPE~ ---
+\item \label{rb_imemo_tmpbuf_t} \verb~rb_imemo_tmpbuf_t~ --- A linked list with a payload consisting of
+two \url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~VALUE~}'s: \verb~flags~ and \verb~reserved~ and a \verb~VALUE~ pointer
+called\ldots{}.\textasciitilde{}ptr\textasciitilde{} which apparently is a malloc'd buffer. Also has a
+\verb~size_t~ called \verb~cnt~ which is the size of that buffer. Finally has
+a pointer to another \verb~rb_imemo_tmpbuf_struct~ called \verb~next~.
+\end{itemize}
+
+\section{Lexer}
+\label{sec-5}
+
+\begin{itemize}
+\item \label{yylex} \verb~yylex~ --- A wrapper for \hyperref[parser_yylex]{\verb~parser\_yylex~} with some extra
+options. Initializes a \hyperref[yytokentype]{\verb~yytokentype~}. Assigns \verb~p~, a struct of
+\url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~parser\_params~} an \texttt{\verb~lval~} (with type \hyperref[YYSTYPE]{\verb~YYSTYPE~}) and gives \verb~lval~ a
+\verb~val~ of \hyperref[Qundef]{\verb~Qundef~}. (I guess initializing \verb~p~ with an empty \verb~lval~?)
+Then calls \hyperref[parser_yylex]{\verb~parser\_yylex~} with \verb~p~ and assigns the result to the
+\verb~yytokentype~ variable. If \hyperref[has_delayed_token]{\verb~has\_delayed\_token~} (never in Ruby
+parser) then call \verb~dispatch_delayed_token~. Else if \verb~parser\_yylex~
+returns 0 then call \verb~dispatch_scan_event~, which, uh, in Ruby parser
+does nothing (well, it casts 0 to void).
+\item \label{parser_yylex} \verb~parser_yylex~ ---
+\end{itemize}
+
+\section{Terminals}
+\label{sec-6}
+\begin{itemize}
+\item \label{kALIAS} --- \verb~alias~
+\item \label{tGVAR} --- Global variable
+\item \label{tBACK_REF} --- \verb~$+~, \verb~$&~, \verb~$`~, \verb~$\~
+\end{itemize}
+\section{Grammar Rules}
+\label{sec-7}
+\begin{itemize}
+\item \verb~program~ --- Just the top level rule. Alias for \texttt{\verb~top\_compstmt~}
+\item \label{top_compstmt} \verb~top_compstmt~ --- Again just \hyperref[top_stmts]{\verb~top\_stmts~} with an
+\hyperref[opt_terms]{\verb~opt\_terms~} add on.
+\item \label{top_stmts} --- Either nothing, one single \url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~top_stmt~} or a
+\item \label{opt_terms}
+\end{itemize}
+
+\section{Sources}
+\label{sec-8}
+
+\begin{itemize}
+\item \url{https://whitequark.org/blog/2013/04/01/ruby-hacking-guide-ch-11-finite-state-lexer/}
+\item \url{https://ruby-hacking-guide.github.io/}
+\end{itemize}
+% Emacs 25.2.1 (Org mode 8.2.10)
+\end{document}
