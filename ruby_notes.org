@@ -60,13 +60,9 @@ attempts to understand the Ruby code.
 - <<~tNTH_REF~>> --- ~$1~, ~$2~...
 - 
 * Grammar Rules
-- ~program~ --- Just the top level rule. Alias for [[top_comp_stmt][~top\_compstmt~]]
-- <<top_compstmt>> ~top_compstmt~ --- Again just [[top_stmts][~top\_stmts~]] with an
-  [[opt_terms][~opt\_terms~]] add on.
-- <<top_stmts>> ~top_stmts~ --- Either nothing, one single [[~top_stmt~]] or a 
-- <<~mlhs~>> ~mlhs~ --- Either [[~mlhs_basic~]] or essential [[~mlhs_basic~]]
-  in parenthesis. Pretty sure this is just any infix expression.
-- 
+- <<~mlhs~>> ~mlhs~ --- Either [[mlhs_basic][~mlhs\_basic~]] or a ~mlhs_basic~ in
+  parenthesis. Pretty sure this is just any infix expression.
+- <<mlhs_basic>> ~mlhs_basic~ -- Pretty much an infix expression
  
 * Sources
 

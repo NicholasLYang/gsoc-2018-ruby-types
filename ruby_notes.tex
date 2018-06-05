@@ -1,4 +1,4 @@
-% Created 2018-06-05 Tue 15:32
+% Created 2018-06-05 Tue 17:16
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -79,7 +79,7 @@ I'm guessing this is just the heap/free list for the parser?).
 \item \label{yytokentype} \verb~yytokentype~
 \item \label{YYSTYPE} \verb~YYSTYPE~ ---
 \item \label{rb_imemo_tmpbuf_t} \verb~rb_imemo_tmpbuf_t~ --- A linked list with a payload consisting of
-two \url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~VALUE~}'s: \verb~flags~ and \verb~reserved~ and a \verb~VALUE~ pointer
+two \url{file:///Users/nicholas/cs_projects/gsoc-2018-ruby-types/~VALUE~}'s: \verb~flags~ and \verb~reserved~ and a \verb~VALUE~ pointer
 called\ldots{}.\textasciitilde{}ptr\textasciitilde{} which apparently is a malloc'd buffer. Also has a
 \verb~size_t~ called \verb~cnt~ which is the size of that buffer. Finally has
 a pointer to another \verb~rb_imemo_tmpbuf_struct~ called \verb~next~.
@@ -91,7 +91,7 @@ a pointer to another \verb~rb_imemo_tmpbuf_struct~ called \verb~next~.
 \begin{itemize}
 \item \label{yylex} \verb~yylex~ --- A wrapper for \hyperref[parser_yylex]{\verb~parser\_yylex~} with some extra
 options. Initializes a \hyperref[yytokentype]{\verb~yytokentype~}. Assigns \verb~p~, a struct of
-\url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~parser\_params~} an \texttt{\verb~lval~} (with type \hyperref[YYSTYPE]{\verb~YYSTYPE~}) and gives \verb~lval~ a
+\url{file:///Users/nicholas/cs_projects/gsoc-2018-ruby-types/~parser\_params~} an \texttt{\verb~lval~} (with type \hyperref[YYSTYPE]{\verb~YYSTYPE~}) and gives \verb~lval~ a
 \verb~val~ of \hyperref[Qundef]{\verb~Qundef~}. (I guess initializing \verb~p~ with an empty \verb~lval~?)
 Then calls \hyperref[parser_yylex]{\verb~parser\_yylex~} with \verb~p~ and assigns the result to the
 \verb~yytokentype~ variable. If \hyperref[has_delayed_token]{\verb~has\_delayed\_token~} (never in Ruby
@@ -107,15 +107,15 @@ does nothing (well, it casts 0 to void).
 \item \label{kALIAS} --- \verb~alias~
 \item \label{tGVAR} --- Global variable
 \item \label{tBACK_REF} --- \verb~$+~, \verb~$&~, \verb~$`~, \verb~$\~
+\item \label{tNTH_REF} --- \verb~$1~, \verb~$2~\ldots{}
+\item 
 \end{itemize}
 \section{Grammar Rules}
 \label{sec-7}
 \begin{itemize}
-\item \verb~program~ --- Just the top level rule. Alias for \texttt{\verb~top\_compstmt~}
-\item \label{top_compstmt} \verb~top_compstmt~ --- Again just \hyperref[top_stmts]{\verb~top\_stmts~} with an
-\hyperref[opt_terms]{\verb~opt\_terms~} add on.
-\item \label{top_stmts} --- Either nothing, one single \url{file:///Users/nicholas/cs_projects/gsoc_ruby_types/~top_stmt~} or a
-\item \label{opt_terms}
+\item \label{mlhs} \verb~mlhs~ --- Either \hyperref[mlhs_basic]{\verb~mlhs\_basic~} or a \verb~mlhs_basic~ in
+parenthesis. Pretty sure this is just any infix expression.
+\item \label{mlhs_basic} \verb~mlhs_basic~ -- Pretty much an infix expression
 \end{itemize}
 
 \section{Sources}
