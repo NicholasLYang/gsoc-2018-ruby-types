@@ -1,0 +1,53 @@
+% Created 2018-06-24 Sun 15:36
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Nicholas Yang}
+\date{\today}
+\title{Ripper Notes}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{Dispatch}
+\label{sec-1}
+
+\begin{itemize}
+\item \label{dispatch3} \verb~dispatch3~ --- Some sort of dispatch for 3
+arguments. Calls \texttt{\verb~ripper\_dispatch3~}. Similar functions exist for
+arity 0 through 7.
+
+\item \label{ripper_dispatch3} \verb~ripper\_dispatch3(struct parser_params *p, ID   mid, VALUE a, VALUE b, VALUE c)~ --- Takes the parser params, an ID,
+and three variables called \verb~a~, \verb~b~, \verb~c~. Calls \texttt{\verb~validate~} on each
+of the variables, then calls \texttt{\verb~rb\_funcall~} with \verb~p->value~, the ID, 3
+(the arity of the function), and the variables.
+
+\item \label{validate} \verb~validate(x)~ --- Assigns x to
+\texttt{\verb~get\_value~} called with \verb~x~.
+
+\item \label{get_value}
+
+\item \label{rb_funcall}
+\end{itemize}
+% Emacs 25.2.1 (Org mode 8.2.10)
+\end{document}

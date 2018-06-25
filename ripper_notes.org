@@ -1,0 +1,41 @@
+#+TITLE: Ripper Notes
+
+* General Types
+- <<NODE>> ~NODE~ --- Nodes are the building blocks that the parser
+  spits out. They can have up to 3 children (~u1, u2, u3~), each of
+  which is either another ~NODE~, an ~ID~ or a ~VALUE~. Each separate
+  child also has another possible type. For instance, ~u1~ could be an
+  ~ID*~ caled ~tbl~ (I'm guessing a table of sorts?). ~u2~ could be a
+  ~long~ called ~argc~ (erm, arg count for something?). ~u3~ could be
+  a ~long~ called ~state~, a ~struct rb_global_entry*~ called ~entry~,
+  or a ~struct rb_args_info*~ called args~. My guess is that all
+  together this makes a symbol table for blocks.
+
+* Dispatch
+
+- <<dispatch3>> ~dispatch3(n, a, b, c)~ --- Some sort of dispatch for
+  3 arguments. Calls [[<<ripper_dispatch3>>][~ripper\_dispatch3~]] with the three arguments, ~a,
+  b, c~, and concatenates ~ripper_id_~ to the name ~n~. Similar
+  functions exist for arity 0 through 7.
+
+- <<ripper_dispatch3>> ~ripper\_dispatch3(struct parser_params *p, ID
+  mid, VALUE a, VALUE b, VALUE c)~ --- Takes the parser params, an ID,
+  and three variables called ~a~, ~b~, ~c~. Calls [[<<validate>>][~validate~]] on each
+  of the variables, then calls [[<<rb_funcall>>][~rb\_funcall~]] with ~p->value~, the ID, 3
+  (the arity of the function), and the variables.
+
+- <<validate>> ~validate(x)~ --- Assigns x to
+  [[<<get_value>>][~get\_value~]] called with ~x~.
+
+- <<get_value>> ~get_value(x)~ --- Calls [[<<ripper_get_value>>][~ripper\_get\_value~]]
+
+- <<ripper_get_value>> ~ripper\_get\_value(VALUE v)~ --- If ~v~ is
+  ~Qundef~ return ~Qnil~, otherwise, return ~v~ if not ~RB_TYPE_P(v,
+  T_NODE)~, which, erm, I guess checks if it's a node? Finally, it
+  casts the value to a node, checks that it's a NODE_RIPPER (returns
+  ~Qnil~ otherwise), then returns ~nd->nd_rval~. Note that ~nd_rval~
+  is a macro that resolves to ~u2.value~
+
+- <<rb_funcall>> ~rb_funcall~
+
+
